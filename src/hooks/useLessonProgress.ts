@@ -185,7 +185,7 @@ export function useLessonProgress() {
     // First, try to find lessons with no prerequisites
     const availableLessons = incompleteLessons.filter(lesson =>
       !lesson.prerequisites?.length || 
-      lesson.prerequisites.every(preReqId => 
+      lesson.prerequisites.every((preReqId: string) => 
         lessonState.completedLessons.includes(preReqId)
       )
     );
@@ -202,12 +202,33 @@ export function useLessonProgress() {
     return lessonState.completedLessons.length === LESSONS.length;
   };
 
+  const resetLessonProgress = (lessonId: string) => {
+    setLessonState(prevState => ({
+      ...prevState,
+      lessons: {
+        ...prevState.lessons,
+        [lessonId]: {
+          currentQuestionIndex: 0,
+          totalQuestions: LESSONS.find(l => l.id === lessonId)?.questions.length || 0,
+          completed: false,
+          score: 0,
+          questionProgress: {},
+          correctAnswers: 0,
+          totalAttempts: 0,
+        },
+      },
+      // Remove from completed lessons when resetting
+      completedLessons: prevState.completedLessons.filter(id => id !== lessonId),
+    }));
+  };
+
   return {
     updateQuestionProgress,
     getCurrentLesson,
     getNextAvailableLesson,
     hasCompletedAllLessons,
     getLessonProgress,
+    resetLessonProgress,
     lessonState,
   };
 } 

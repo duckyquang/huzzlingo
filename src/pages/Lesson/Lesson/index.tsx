@@ -16,7 +16,7 @@ export default function Lesson() {
   const dispatch = useDispatch();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [lesson, setLesson] = useState<ReturnType<typeof getLesson>>();
-  const { updateQuestionProgress, getLessonProgress } = useLessonProgress();
+  const { updateQuestionProgress, getLessonProgress, resetLessonProgress } = useLessonProgress();
 
   useEffect(() => {
     if (lessonId) {
@@ -76,6 +76,9 @@ export default function Lesson() {
   };
 
   const handleRetry = () => {
+    if (lessonId) {
+      resetLessonProgress(lessonId);
+    }
     setCurrentQuestionIndex(0);
   };
 

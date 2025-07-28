@@ -13,23 +13,25 @@ export default function FinalChallenge() {
   };
 
   return (
-    <div className="py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="h-screen overflow-hidden flex flex-col px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto flex-1 flex flex-col">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-8"
+          className="text-center py-4 flex-shrink-0"
         >
-          <h1 className="text-4xl font-bold mb-4">
+          <h1 className="text-3xl font-bold mb-2">
             Final Challenge
           </h1>
-          <p className="text-xl text-white/60">
+          <p className="text-lg text-white/60">
             Can you get a date at the coffee shop? Chat with Sarah and show off your smoothness!
           </p>
         </motion.div>
 
-        <div className="space-y-8">
-          <FinalBoss />
+        <div className="flex-1 relative overflow-visible">
+          <div className="relative h-full">
+            <FinalBoss />
+          </div>
           
           {showScore && (
             <motion.div

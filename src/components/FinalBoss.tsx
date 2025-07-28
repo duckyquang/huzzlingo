@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import { motion } from 'framer-motion';
 import BossAvatar from './BossAvatar';
@@ -28,6 +28,7 @@ export default function FinalBoss() {
   const [isAIEnabled, setIsAIEnabled] = useState(true);
   const [creditsLeft, setCreditsLeft] = useState(0);
   const [showCreditsPopup, setShowCreditsPopup] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Initialize with welcome message and credits
   useEffect(() => {
@@ -49,6 +50,16 @@ export default function FinalBoss() {
   const updateCredits = useCallback(() => {
     setCreditsLeft(aiService.getCreditsLeft());
   }, []);
+
+  // Auto-scroll to bottom when new messages are added
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -117,7 +128,7 @@ export default function FinalBoss() {
     const newHistory = [...conversationHistory, userMessageText];
     setConversationHistory(newHistory);
 
-    // Simulate boss typing
+    // Simulate realistic typing time
     setIsTyping(true);
 
     try {
@@ -130,6 +141,20 @@ export default function FinalBoss() {
           ? aiService.analyzeConversation(userMessageText, interestLevel, messagesLeft)
           : Promise.resolve(null)
       ]);
+
+      // Calculate realistic typing delay based on response length
+      const baseDelay = 1000; // Base 1 second
+      const wordsInResponse = aiResponse.split(' ').length;
+      const typingSpeed = 60; // Words per minute (average typing speed)
+      const calculatedDelay = Math.max(baseDelay, (wordsInResponse / typingSpeed) * 60 * 1000);
+      const finalDelay = Math.min(calculatedDelay, 4000); // Cap at 4 seconds max
+
+      // Add some randomness to make it feel more human
+      const randomVariation = (Math.random() - 0.5) * 1000; // ±500ms
+      const typingDelay = Math.max(500, finalDelay + randomVariation);
+
+      // Wait for the calculated typing time
+      await new Promise(resolve => setTimeout(resolve, typingDelay));
 
       // Add boss response
       const bossMessage: Message = {
@@ -291,7 +316,7 @@ export default function FinalBoss() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-3xl">
+    <div className="container mx-auto px-4 max-w-3xl max-h-[85vh]" style={{ paddingTop: '80px', paddingBottom: '0px' }}>
       {/* AI Status Indicator */}
       <div className="mb-4 flex justify-between items-center relative">
         <div className="flex items-center gap-2">
@@ -330,7 +355,7 @@ export default function FinalBoss() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="credits-popup absolute bottom-full left-0 mb-2 z-50 bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 backdrop-blur-sm rounded-xl p-4 min-w-[280px] shadow-xl"
+            className="credits-popup absolute bottom-full left-0 mb-2 z-[60] bg-gradient-to-r from-blue-500/20 to-purple-500/20 border border-blue-500/30 backdrop-blur-sm rounded-xl p-4 w-[280px] shadow-xl"
           >
             <div>
               <h3 className="text-blue-400 font-semibold text-sm mb-1">Global Credits Left</h3>
@@ -378,8 +403,8 @@ export default function FinalBoss() {
       </div>
 
       {/* Chat Box */}
-      <div className="bg-huzz-dark-accent rounded-xl p-6 flex flex-col min-h-[400px]">
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+      <div className="bg-huzz-dark-accent rounded-xl p-6 flex flex-col h-[350px]">
+        <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2 scroll-smooth">
           {messages.map((message) => (
             <motion.div
               key={message.id}
@@ -412,6 +437,8 @@ export default function FinalBoss() {
               </div>
             </motion.div>
           )}
+          {/* Invisible div to scroll to */}
+          <div ref={messagesEndRef} />
         </div>
 
         <div className="flex gap-4">

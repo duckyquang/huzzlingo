@@ -14,13 +14,13 @@ export default function Courses() {
           const { progress, isComplete, correctAnswers, totalQuestions } = getLessonProgress(lesson.id);
           
           return (
-            <Link key={lesson.id} to={`/lesson/${lesson.id}`}>
+            <Link key={lesson.id} to={`/lesson/${lesson.id}`} className="flex">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
                 className={`
-                  relative rounded-xl p-6 border transition-all
+                  relative rounded-xl p-6 border transition-all flex-1 flex flex-col
                   ${isComplete 
                     ? 'bg-gradient-to-br from-green-500/10 to-green-500/5 border-green-500/20' 
                     : 'bg-huzz-dark-purple border-white/5 hover:border-white/10'
@@ -31,7 +31,7 @@ export default function Courses() {
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-2xl">{lesson.emoji}</span>
+                      <span className="text-2xl">{lesson.icon}</span>
                       <h2 className="text-xl font-semibold">{lesson.title}</h2>
                     </div>
                     <p className="text-white/60">{lesson.description}</p>
@@ -39,9 +39,9 @@ export default function Courses() {
                 </div>
 
                 {/* Progress Section */}
-                <div className="space-y-4">
+                <div className="flex-1 flex flex-col">
                   {/* Progress Bar */}
-                  <div>
+                  <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-sm text-white/60">Progress</span>
                       <span className="text-sm text-white/60">
@@ -61,22 +61,22 @@ export default function Courses() {
                   </div>
 
                   {/* Stats & Action */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex gap-2">
-                      <span className="px-3 py-1 bg-white/5 rounded-full text-sm">
-                        {lesson.difficulty}
+                  <div className="flex items-center justify-between mt-auto pt-2">
+                    <div className="flex flex-wrap gap-2">
+                      <span className="px-2 py-1 bg-white/5 rounded-full text-xs font-medium">
+                        {lesson.metadata.difficulty}
                       </span>
-                      <span className="px-3 py-1 bg-white/5 rounded-full text-sm">
+                      <span className="px-2 py-1 bg-white/5 rounded-full text-xs font-medium">
                         {lesson.questions.length} questions
                       </span>
                     </div>
-                    <span className={`
-                      px-4 py-2 rounded-xl font-medium
+                    <button className={`
+                      px-3 py-1.5 rounded-lg font-medium text-sm transition-colors flex-shrink-0 ml-2
                       ${isComplete 
                         ? 'bg-green-500/20 text-green-500' 
                         : progress > 0 
-                        ? 'bg-gradient-huzz' 
-                        : 'bg-white/5'
+                        ? 'bg-gradient-huzz text-white' 
+                        : 'bg-white/5 text-white hover:bg-white/10'
                       }
                     `}>
                       {isComplete 
@@ -85,7 +85,7 @@ export default function Courses() {
                         ? 'Continue' 
                         : 'Start'
                       }
-                    </span>
+                    </button>
                   </div>
                 </div>
 

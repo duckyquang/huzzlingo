@@ -14,7 +14,7 @@ export default function MainLayout() {
       <div className="flex min-h-screen pt-16 lg:pt-0">
         <Sidebar />
         <main className="flex-1 lg:pl-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-0">
             <Outlet />
           </div>
         </main>
